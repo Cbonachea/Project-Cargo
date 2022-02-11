@@ -18,12 +18,14 @@ public class ShipControl : MonoBehaviour
     public bool setNewTarget;
     public float currentFuel;
     public float fuelConsumption;
+    public float fuelRefill;
     public Slider slider;
 
     private AreaEffector2D rocketBlast;
     private Animator animator;
     private Rigidbody2D ship;
-    private bool isCoroutineStarted = false;
+    private bool isFuelConsumptionStarted = false;
+    private bool isFuelRefillStarted = false;
 
 
     private PlayerInput playerInput;
@@ -41,8 +43,9 @@ public class ShipControl : MonoBehaviour
         rocketBlast = GetComponentInChildren<AreaEffector2D>();
         hasCargo = false;
         setNewTarget = true;
-        currentFuel = 35;
+        currentFuel = 20f;
         fuelConsumption = .2f;
+        fuelRefill = .7f;
     }
 
     void Update()
@@ -59,7 +62,7 @@ public class ShipControl : MonoBehaviour
             ship.AddForce(transform.up * thrust);
             rocketBlast.enabled = true;
             FindObjectOfType<AudioManager>().Play("EngineSound");
-            if (!isCoroutineStarted)
+            if (!isFuelConsumptionStarted)
             {
                 StartCoroutine(FuelDrainOverTimeCoroutine(fuelConsumption));
             }
@@ -71,7 +74,7 @@ public class ShipControl : MonoBehaviour
             FindObjectOfType<AudioManager>().Stop("EngineSound");
             rocketBlast.enabled = false;
             StopCoroutine(FuelDrainOverTimeCoroutine(fuelConsumption));
-            isCoroutineStarted = false;
+            isFuelConsumptionStarted = false;
         }
 
         if (playerInput.torqueInputR == true)
@@ -102,6 +105,25 @@ public class ShipControl : MonoBehaviour
         }
     }
 
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "FuelStation" && !isFuelRefillStarted)
+        {
+            StartCoroutine(FuelFillOverTimeCoroutine(fuelRefill));
+            isFuelRefillStarted = true;
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "FuelStation")
+        {
+            StopCoroutine(FuelFillOverTimeCoroutine(fuelRefill));
+            isFuelRefillStarted = false;
+        }
+    }
+
+
     public void SetFuel(float currentFuel)
     {
         slider.value = currentFuel;
@@ -117,7 +139,23 @@ public class ShipControl : MonoBehaviour
         while (currentFuel > 0 && playerInput.thrustInput == true)
         {
             currentFuel -= fuelConsumption;
-            isCoroutineStarted = true;
+            isFuelConsumptionStarted = true;
+            yield return new WaitForSeconds(.1f);
+        }
+    } 
+    
+    
+    public void FuelFillOverTime(float fuelRefill)
+    {
+        StartCoroutine(FuelFillOverTimeCoroutine(fuelRefill));
+    }
+
+    IEnumerator FuelFillOverTimeCoroutine(float fuelRefill)
+    {
+        while (currentFuel < 100 && playerInput.thrustInput == false)
+        {
+            currentFuel += fuelRefill;
+            isFuelRefillStarted = true;
             yield return new WaitForSeconds(.1f);
         }
     }
