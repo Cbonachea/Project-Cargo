@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - cargo
+  - deliveryTarget
+  - Restaurant
+  - FuelStation
+  - wind
+  - Antenna
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - Parallax
+  - Background
+  - Buildings
+  - Debris
+  - Cargo
+  - Antenna
+  - Ship
+  - wind
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Parallax
+    uniqueID: 2510310395
+    locked: 0
+  - name: Background
+    uniqueID: 3034031135
+    locked: 0
+  - name: Building
+    uniqueID: 2553672761
+    locked: 0
+  - name: Ground
+    uniqueID: 1781545031
+    locked: 0
+  - name: Debris
+    uniqueID: 4042867341
+    locked: 0
+  - name: Antenna
+    uniqueID: 413849267
+    locked: 0
+  - name: UI
+    uniqueID: 3526259661
+    locked: 0
+  - name: Cargo
+    uniqueID: 3277984751
+    locked: 0
+  - name: Ship
+    uniqueID: 3662556383
+    locked: 0
