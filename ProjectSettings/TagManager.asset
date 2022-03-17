@@ -10,6 +10,7 @@ TagManager:
   - FuelStation
   - wind
   - Antenna
+  - Bounce
   layers:
   - Default
   - TransparentFX

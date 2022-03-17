@@ -7,6 +7,7 @@ public class PlayerInput : MonoBehaviour
     public bool thrustInput { get; private set; }
     public bool torqueInputL { get; private set; }
     public bool torqueInputR { get; private set; }
+    public bool useSpecial { get; private set; }
     public bool cargoDrop { get; private set; }
 
     private void Update()
@@ -28,6 +29,9 @@ public class PlayerInput : MonoBehaviour
         
         if (Input.GetKeyUp("a"))
         {torqueInputL = false;}
+
+        if (Input.GetKeyDown("s"))
+        {useSpecial = !useSpecial;}
 
         if (Input.GetKey("space"))
         {cargoDrop = true;}

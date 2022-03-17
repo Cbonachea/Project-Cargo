@@ -30,6 +30,6 @@ public class CameraControl : MonoBehaviour
 
     void FixedUpdate()
     {
-        { vcam.m_Lens.OrthographicSize = height;}
+        vcam.m_Lens.OrthographicSize = height;
     }
 }
