@@ -90,25 +90,25 @@ public class ShipControl : MonoBehaviour
 
         if (playerInput.useSpecial)
         {
-        thrust = 65;
-        fuelConsumption = .4f;
+            thrust = 65;
+            fuelConsumption = .4f;
         }
-
         else
         {
-        thrust = 35;
-        fuelConsumption = .2f;
+            thrust = 35;
+            fuelConsumption = .2f;
         }
 
 
-        if (playerInput.thrustInput && currentFuel > 0 && isControlling)
+        if (isControlling && playerInput.thrustInput && currentFuel > 0)
         {
-        animator.SetBool("isThrusting", true);
-        rocketBlast.enabled = true;
-        FindObjectOfType<AudioManager>().Play("EngineSound");
+            animator.SetBool("isThrusting", true);
+            rocketBlast.enabled = true;
+            FindObjectOfType<AudioManager>().Play("EngineSound");
+
             if (!isFuelConsumptionStarted)
             {
-            StartCoroutine(FuelDrainOverTimeCoroutine(fuelConsumption));
+                StartCoroutine(FuelDrainOverTimeCoroutine(fuelConsumption));
             }
         }
 
@@ -117,7 +117,7 @@ public class ShipControl : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (playerInput.thrustInput && currentFuel > 0 && isControlling)
+        if (isControlling && playerInput.thrustInput && currentFuel > 0)
         {
             ship.AddForce(transform.up * thrust);
         }
@@ -131,16 +131,22 @@ public class ShipControl : MonoBehaviour
             isFuelConsumptionStarted = false;
         }
 
-        if (playerInput.torqueInputR == true && isControlling)
-            {ship.AddTorque(-torque * Mathf.Deg2Rad, ForceMode2D.Impulse);}
+        if (playerInput.torqueInputR && isControlling)
+        {
+            ship.AddTorque(-torque * Mathf.Deg2Rad, ForceMode2D.Impulse);
+        }
 
-        if (playerInput.torqueInputL == true && isControlling)
-            {ship.AddTorque(torque * Mathf.Deg2Rad, ForceMode2D.Impulse);}
+        if (playerInput.torqueInputL && isControlling) 
+        {
+            ship.AddTorque(torque * Mathf.Deg2Rad, ForceMode2D.Impulse);
+        }
 
-        if (playerInput.cargoDrop == true && hasCargo == true)
-            {var newCargo = Instantiate(cargo, cargoDropLocation.position , cargoDropLocation.rotation);
+        if (playerInput.cargoDrop && hasCargo)
+        {
+            Instantiate(cargo, cargoDropLocation.position , cargoDropLocation.rotation);
             hasCargo = false;
-            setNewTarget = true;}
+            setNewTarget = true;
+        }
 
         if(currentFuel <= 0)
         {
@@ -158,7 +164,6 @@ public class ShipControl : MonoBehaviour
         {
             Debug.Log("Bounce Bby");
         }
-
         else if (collision.relativeVelocity.magnitude >= 4f)
         {
                 isControlling = false;
@@ -174,14 +179,11 @@ public class ShipControl : MonoBehaviour
                 Instantiate(explosionprefab2, gameObject.transform.position, Quaternion.identity);
         }
 
-        else
+        else if (collision.gameObject.tag == "Restaurant" && setNewTarget)
         { 
-            if (collision.gameObject.tag == "Restaurant" && setNewTarget)
-            {
             hasCargo = true;
             setDeliveryTarget.SetTarget();
             setNewTarget = false;
-            }
         }
     }
     //this method is called when a collision is initiated
@@ -190,8 +192,8 @@ public class ShipControl : MonoBehaviour
     {
         if (collision.gameObject.tag == "FuelStation" && !isFuelRefillStarted)
         {
-            StartCoroutine(FuelFillOverTimeCoroutine(fuelRefill));
             isFuelRefillStarted = true;
+            StartCoroutine(FuelFillOverTimeCoroutine(fuelRefill));
         }
     }
     //this method is called as long as the collided objects remain collided
@@ -222,7 +224,7 @@ public class ShipControl : MonoBehaviour
 
     IEnumerator FuelDrainOverTimeCoroutine(float fuelConsumption)
     {
-        while (currentFuel > 0 && playerInput.thrustInput == true)
+        while (playerInput.thrustInput && currentFuel > 0)
         {
             currentFuel -= fuelConsumption;
             isFuelConsumptionStarted = true;
@@ -239,7 +241,7 @@ public class ShipControl : MonoBehaviour
 
     IEnumerator FuelFillOverTimeCoroutine(float fuelRefill)
     {
-        while (currentFuel < 100 && playerInput.thrustInput == false)
+        while (!playerInput.thrustInput && currentFuel < 100)
         {
             currentFuel += fuelRefill;
             isFuelRefillStarted = true;
