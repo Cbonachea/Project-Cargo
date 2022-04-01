@@ -62,7 +62,7 @@ public class ShipControl : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         ship = GetComponent<Rigidbody2D>();
         shipTransform = GetComponent<Transform>();
-                cargoDropLocation = GetComponent<Transform>();
+        cargoDropLocation = GetComponent<Transform>();
         animator = GetComponent<Animator>();
         rocketBlast = GetComponentInChildren<AreaEffector2D>();
         isControlling = true;
