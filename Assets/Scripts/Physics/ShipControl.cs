@@ -3,75 +3,68 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//these fields create the components in parenthesis if they are not found
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlayerInput))]
-//these fields create the components in parenthesis if they are not found
-
 public class ShipControl : MonoBehaviour
 {
     //<PUBLIC VARIABLES>
-    public bool isControlling;
+    
     //isControlling is used to check if the player can control the ship
-    public float thrust;
+    public bool isControlling;
     //thrust refers to the engine power and is the force applied when thrusting the engine
-    public float torque;
+    public float thrust;
     //torque refers to the amount of angular momentum added to the ship when rotating clockwise and counterclockwise
-    public Rigidbody2D cargo;
+    public float torque;    
     //cargo is on the cargo which you drop to make deliveries
-    public Transform cargoDropLocation;
+    public Rigidbody2D cargo;
     //cargoDropLocation points to the location from where the cargo gets instantiated and dropped
-    public SetDeliveryTarget setDeliveryTarget;
+    public Transform cargoDropLocation;
     //setDeliveryTarget is a reference to the setDeliveryTarget script which randomly chooses a residence as the destination for the delivery
-    public bool setNewTarget;
+    public SetDeliveryTarget setDeliveryTarget;
     //setNewTarget is used to check if the player can pick up more cargo
-    public float currentFuel;
+    public bool setNewTarget;
     //currentFuel refers to the amount of fuel in your tank
-    public float fuelConsumption;
+    public float currentFuel;
     //fuelConsumption is the multiplier for how fast your engine consumes fuel
-    public float fuelRefill;
+    public float fuelConsumption;
     //fuelRefill is the multiplier for how fast your fuel pumps can fill your fuel tank
-    public Slider slider;
+    public float fuelRefill;
     //slider is used to display current fuel level in the UI
-    public Text altitude;
+    public Slider slider;
     //altitude text field is used to display current altitude on the UI altimeter
-    public GameObject explosionprefab;
-    public GameObject explosionprefab2;
-
+    public Text altitude;
 
     //<PRIVATE VARIABLES>
-    private AreaEffector2D rocketBlast;
+
     //rocketBlast area effector creates the force that blasts debris simulating engine blast
-    private ParticleSystem crashExplosion;
-    //crashExplosion creates the explosions particles upon crashing
-    private Animator animator;
+    private AreaEffector2D rocketBlast;
     //animator is used to animate the ships thrust
-    private Rigidbody2D ship;
+    private Animator animator;
     //ship rigidbody is used to apply physics to the ship
-    private Transform shipTransform;
+    private Rigidbody2D ship;
     //shipTransform is used to determine the altitude of the ship
-    private int shipOffset;
-    //shipOffset is used to determine the alitimeter correction but it is currently not in use
-    private bool isFuelConsumptionStarted = false;
+    private Transform shipTransform;
     //isFuelConsumptionStarted is used to make sure that the fuel consumption only starts one time
-    private bool isFuelRefillStarted = false;
+    private bool isFuelConsumptionStarted = false;
     //isFuelRefillStarted is used to make sure that the fuel refill only starts one time
-    private bool hasCargo;
+    private bool isFuelRefillStarted = false;
     //hasCargo gets set within the 'LandedScript' when you pick up or drop off a delivery
-    private PlayerInput playerInput;
+    private bool hasCargo;
     //reference to the playerInput script
-
-
+    private PlayerInput playerInput;
+    //explosionprefab is a particle system
+    [SerializeField] private GameObject explosionprefab;
+    [SerializeField] private GameObject explosionprefab2;
 
     private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
         ship = GetComponent<Rigidbody2D>();
         shipTransform = GetComponent<Transform>();
-
-        cargoDropLocation = GetComponent<Transform>();
+                cargoDropLocation = GetComponent<Transform>();
         animator = GetComponent<Animator>();
         rocketBlast = GetComponentInChildren<AreaEffector2D>();
-        crashExplosion = GetComponentInChildren<ParticleSystem>();
         isControlling = true;
         hasCargo = false;
         setNewTarget = true;
@@ -79,9 +72,6 @@ public class ShipControl : MonoBehaviour
         fuelConsumption = .2f;
         fuelRefill = .7f;
     }
-    //this method initializes conditions
-
-
 
     void Update()
     {
@@ -99,7 +89,6 @@ public class ShipControl : MonoBehaviour
             fuelConsumption = .2f;
         }
 
-
         if (isControlling && playerInput.thrustInput && currentFuel > 0)
         {
             animator.SetBool("isThrusting", true);
@@ -113,7 +102,6 @@ public class ShipControl : MonoBehaviour
         }
 
     }
-    //this method is called every time a frame is drawn
 
     void FixedUpdate()
     {
@@ -154,9 +142,6 @@ public class ShipControl : MonoBehaviour
             FindObjectOfType<AudioManager>().Stop("EngineSound");
         }
     }
-    //this method is called based on a fixed time step not based on frame rate
-
-
 
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -166,17 +151,17 @@ public class ShipControl : MonoBehaviour
         }
         else if (collision.relativeVelocity.magnitude >= 4f)
         {
-                isControlling = false;
-                animator.SetBool("isThrusting", false);
-                FindObjectOfType<AudioManager>().Stop("EngineSound");
-                rocketBlast.enabled = false;
-                StopCoroutine(FuelDrainOverTimeCoroutine(fuelConsumption));
-                isFuelConsumptionStarted = false;
-                ship.angularDrag = 0.3f;
-                Destroy(gameObject);
-                FindObjectOfType<AudioManager>().Play("Explosion");
-                Instantiate(explosionprefab, gameObject.transform.position, Quaternion.identity);
-                Instantiate(explosionprefab2, gameObject.transform.position, Quaternion.identity);
+            isControlling = false;
+            animator.SetBool("isThrusting", false);
+            FindObjectOfType<AudioManager>().Stop("EngineSound");
+            rocketBlast.enabled = false;
+            StopCoroutine(FuelDrainOverTimeCoroutine(fuelConsumption));
+            isFuelConsumptionStarted = false;
+            ship.angularDrag = 0.3f;
+            Destroy(gameObject);
+            FindObjectOfType<AudioManager>().Play("Explosion");
+            Instantiate(explosionprefab, gameObject.transform.position, Quaternion.identity);
+            Instantiate(explosionprefab2, gameObject.transform.position, Quaternion.identity);
         }
 
         else if (collision.gameObject.tag == "Restaurant" && setNewTarget)
@@ -186,7 +171,6 @@ public class ShipControl : MonoBehaviour
             setNewTarget = false;
         }
     }
-    //this method is called when a collision is initiated
 
     void OnCollisionStay2D(Collision2D collision)
     {
@@ -196,7 +180,6 @@ public class ShipControl : MonoBehaviour
             StartCoroutine(FuelFillOverTimeCoroutine(fuelRefill));
         }
     }
-    //this method is called as long as the collided objects remain collided
 
     void OnCollisionExit2D(Collision2D collision)
     {
@@ -206,22 +189,20 @@ public class ShipControl : MonoBehaviour
             isFuelRefillStarted = false;
         }
     }
-    //this method is called when the collided objects seperate
 
-
-
+    //this method sets the slider value to reflect the fuel amount
     public void SetFuel(float currentFuel)
     {
         slider.value = currentFuel;
     }
-    //this method sets the slider value to reflect the fuel amount
 
+    //this method drains fuel over time relative to a fuel consumption rate
     public void FuelDrainOverTime(float fuelConsumption)
     {
         StartCoroutine(FuelDrainOverTimeCoroutine(fuelConsumption));
     }
-    //this method drains fuel over time relative to a fuel consumption rate
 
+    //this coroutine initiates fuel drain
     IEnumerator FuelDrainOverTimeCoroutine(float fuelConsumption)
     {
         while (playerInput.thrustInput && currentFuel > 0)
@@ -230,15 +211,15 @@ public class ShipControl : MonoBehaviour
             isFuelConsumptionStarted = true;
             yield return new WaitForSeconds(.1f);
         }
-    } 
-    //this coroutine initiates fuel drain
-    
+    }
+
+    //this coroutine initiates fuel refill
     public void FuelFillOverTime(float fuelRefill)
     {
         StartCoroutine(FuelFillOverTimeCoroutine(fuelRefill));
     }
-    //this coroutine initiates fuel refill
 
+    //this coroutine stops fuel filling once tank is full
     IEnumerator FuelFillOverTimeCoroutine(float fuelRefill)
     {
         while (!playerInput.thrustInput && currentFuel < 100)
@@ -248,5 +229,4 @@ public class ShipControl : MonoBehaviour
             yield return new WaitForSeconds(.1f);
         }
     }
-    //this coroutine stops fuel filling once tank is full
 }
