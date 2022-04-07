@@ -53,29 +53,12 @@ public class FuelSystem : MonoBehaviour
         if (!playerInput.thrustInput) StopDrainingFuel();
     }
 
-    void OnCollisionStay2D(Collision2D collision)
-    {
-        if (!isFuelRefillStarted && collision.gameObject.tag == "FuelStation")
-        {
-            RefillFuel();
-        }
-    }
+    void OnCollisionStay2D(Collision2D collision) 
+    {if (!isFuelRefillStarted && collision.gameObject.tag == "FuelStation") {RefillFuel();}}
+    void OnCollisionExit2D(Collision2D collision) 
+    {if (collision.gameObject.tag == "FuelStation") {StopRefillingFuel();}}
 
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "FuelStation")
-        {
-            StopRefillingFuel();
-        }
-    }
-
-    //this method sets the slider value to reflect the fuel amount
-    public void SetFuel(int currentFuel)
-    {
-        slider.value = currentFuel;
-    }
-
-    //this method drains fuel over time relative to a fuel consumption rate
+    public void SetFuel(int currentFuel) {slider.value = currentFuel;}
     public void DrainFuel()
     {
         if (!isFuelConsumptionStarted)
@@ -84,15 +67,12 @@ public class FuelSystem : MonoBehaviour
             isFuelConsumptionStarted = true;
         }
     }
-
     public void StopDrainingFuel()
     {
         StopCoroutine(co_DrainFuel());
         isFuelConsumptionStarted = false;
     }
-
-    //this coroutine drains fuel
-    public IEnumerator co_DrainFuel()
+    private IEnumerator co_DrainFuel()
     {
         while (currentFuel > 0 && playerInput.thrustInput)
         {
@@ -100,13 +80,11 @@ public class FuelSystem : MonoBehaviour
             yield return new WaitForSeconds(.1f);
         }
     }
-    void OutofGas()
+    public void OutofGas()
     {
         shipControl.animator.SetBool("isThrusting", false);
         FindObjectOfType<AudioManager>().Stop("EngineSound");
     }
-
-    //this function starts the RefillFuel coroutine
     public void RefillFuel()
     {
         if (!isFuelRefillStarted)
@@ -115,16 +93,12 @@ public class FuelSystem : MonoBehaviour
             StartCoroutine(co_RefillFuel());
         }
     }
-
-    //this function stops the refuelling coroutine and toggles the isRefillStarted bool to true
     public void StopRefillingFuel()
     {
         StopCoroutine(co_RefillFuel());
         isFuelRefillStarted = false;
     }
-
-    //this coroutine refills fuel
-    public IEnumerator co_RefillFuel()
+    private IEnumerator co_RefillFuel()
     {
         while (currentFuel < 100 && !playerInput.thrustInput)
         {
@@ -133,5 +107,4 @@ public class FuelSystem : MonoBehaviour
             yield return new WaitForSeconds(.1f);
         }
     }
-
 }

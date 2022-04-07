@@ -68,11 +68,11 @@ GameObject:
   - component: {fileID: 6201271865871328620}
   - component: {fileID: 6201271865871328623}
   - component: {fileID: 6201271865871328658}
-  - component: {fileID: 6201271865871328617}
   - component: {fileID: 6201271865871328657}
   - component: {fileID: 6201271865871328622}
   - component: {fileID: 6201271865871328616}
   - component: {fileID: 7102452074176779022}
+  - component: {fileID: 6201271865871328617}
   - component: {fileID: 3826716353203793378}
   - component: {fileID: 6931569876480936484}
   m_Layer: 8
@@ -172,31 +172,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &6201271865871328617
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6201271865871328619}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c065cd943fd320548888a1a4788f08a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isControlling: 0
-  thrust: 35
-  torque: 35
-  animator: {fileID: 0}
-  cargoDropLocation: {fileID: 6201271865978238262}
-  setDeliveryTarget: {fileID: 0}
-  setNewTarget: 0
-  altitude: {fileID: 0}
-  currentSpecial: 0
-  crashTolerance: 4
-  fuelSystem: {fileID: 0}
-  explosionprefab: {fileID: 0}
-  explosionprefab2: {fileID: 0}
 --- !u!95 &6201271865871328657
 Animator:
   serializedVersion: 3
@@ -354,6 +329,31 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &6201271865871328617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6201271865871328619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c065cd943fd320548888a1a4788f08a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isControlling: 0
+  thrust: 35
+  torque: 35
+  cargo: {fileID: 2118691027202437082, guid: 0ea4975bc440fdd4fb7e91f0e0e0ea82, type: 3}
+  animator: {fileID: 0}
+  cargoDropLocation: {fileID: 6201271865978238262}
+  setDeliveryTarget: {fileID: 0}
+  setNewTarget: 0
+  altitude: {fileID: 0}
+  currentSpecial: 0
+  crashTolerance: 4
+  explosionprefab: {fileID: 0}
+  explosionprefab2: {fileID: 0}
 --- !u!114 &3826716353203793378
 MonoBehaviour:
   m_ObjectHideFlags: 0

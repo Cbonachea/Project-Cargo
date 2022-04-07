@@ -16,7 +16,7 @@ public class ShipControl : MonoBehaviour
     //torque refers to the amount of angular momentum added to the ship when rotating clockwise and counterclockwise
     public float torque;
     //cargo is on the cargo which you drop to make deliveries
-    private Rigidbody2D cargo;
+    public Rigidbody2D cargo;
     //animator is used to animate the ships thrust
     public Animator animator;
     //cargoDropLocation points to the location from where the cargo gets instantiated and dropped
@@ -42,7 +42,7 @@ public class ShipControl : MonoBehaviour
     //hasCargo gets set within the 'LandedScript' when you pick up or drop off a delivery
     private bool hasCargo;
     //reference to the FuelSystem script
-    public FuelSystem fuelSystem;
+    private FuelSystem fuelSystem;
     //reference to the PlayerInput script
     private PlayerInput playerInput;
     //explosionprefabs are particle systems
@@ -54,8 +54,6 @@ public class ShipControl : MonoBehaviour
     }
     private EngineStatus engineStatus;
 
-
-    public Rigidbody2D Cargo { get => cargo; private set => cargo = value; }
 
     private void Awake()
     {
@@ -72,29 +70,17 @@ public class ShipControl : MonoBehaviour
         currentSpecial = 1;
     }
 
+
+    //<///////////////////////////////////////////////////////////////////////////>
+    //TOGGLING ENGINE/SPECIAL/CARGO STATUS
     void Update()
     {
         altitude.text = Mathf.Round(shipTransform.position.y) + "m";
         if (!isControlling) return;
-        if(playerInput.thrustInput) EngineOn();
+        if (playerInput.thrustInput) EngineOn();
         if (playerInput.useSpecial) UseSpecial();
         if (!playerInput.thrustInput) EngineOff();
         if (hasCargo && playerInput.cargoDrop) DropCargo();
-    }
-
-    void FixedUpdate()
-    {
-        if (!isControlling) return;
-        if (playerInput.torqueInputR) TorqueR();
-        if (playerInput.torqueInputL) TorqueL();
-        if (fuelSystem.currentFuel > 0 && playerInput.thrustInput) Thrust();
-    }
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Bounce") Bounce();
-        else if (collision.relativeVelocity.magnitude >= crashTolerance) Crash();
-        else if (collision.gameObject.tag == "Restaurant" && setNewTarget) LoadPackage();
     }
 
     void EngineOn()
@@ -105,22 +91,6 @@ public class ShipControl : MonoBehaviour
         FindObjectOfType<AudioManager>().Play("EngineSound");
         engineStatus = EngineStatus.on;
     }
-
-    void Thrust()
-    {
-        ship.AddForce(transform.up * thrust);
-    }
-
-    void TorqueL()
-    {
-        ship.AddTorque(torque * Mathf.Deg2Rad, ForceMode2D.Impulse);
-    }
-
-    void TorqueR()
-    {
-        ship.AddTorque(-torque * Mathf.Deg2Rad, ForceMode2D.Impulse);
-    }
-
     void EngineOff()
     {
         if (engineStatus == EngineStatus.off) return;
@@ -129,17 +99,40 @@ public class ShipControl : MonoBehaviour
         rocketBlast.enabled = false;
         engineStatus = EngineStatus.off;
     }
-
     void DropCargo()
     {
         Instantiate(Cargo, cargoDropLocation.position, cargoDropLocation.rotation);
         hasCargo = false;
         setNewTarget = true;
     }
-
     public void UseSpecial()
     {
-    //    Debug.Log("special");
+        //    Debug.Log("special");
+    }
+
+
+    //<///////////////////////////////////////////////////////////////////////////>
+    //ADDING FORCES AND MOVING THE SHIP
+    void FixedUpdate()
+    {
+        if (!isControlling) return;
+        if (playerInput.torqueInputR) TorqueR();
+        if (playerInput.torqueInputL) TorqueL();
+        if (fuelSystem.currentFuel > 0 && playerInput.thrustInput) Thrust();
+    }
+
+    void Thrust() { ship.AddForce(transform.up * thrust); }
+    void TorqueL() { ship.AddTorque(torque * Mathf.Deg2Rad, ForceMode2D.Impulse); }
+    void TorqueR() { ship.AddTorque(-torque * Mathf.Deg2Rad, ForceMode2D.Impulse); }
+
+
+    //<///////////////////////////////////////////////////////////////////////////>
+    //COLLIDING WITH OBJECTS
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Bounce") Bounce();
+        else if (collision.relativeVelocity.magnitude >= crashTolerance) Crash();
+        else if (collision.gameObject.tag == "Restaurant" && setNewTarget) LoadPackage();
     }
 
     void Crash()
@@ -154,12 +147,10 @@ public class ShipControl : MonoBehaviour
         Instantiate(explosionprefab, gameObject.transform.position, Quaternion.identity);
         Instantiate(explosionprefab2, gameObject.transform.position, Quaternion.identity);
     }
-
     void Bounce()
     {
         Debug.Log("Bounce Bby");
     }
-
     void LoadPackage()
     {
         hasCargo = true;
