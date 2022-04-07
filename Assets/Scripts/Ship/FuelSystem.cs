@@ -47,7 +47,6 @@ public class FuelSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        SetFuel(currentFuel);
         if (currentFuel <= 0) OutofGas();
         if (currentFuel > 0 && playerInput.thrustInput) DrainFuel();
         if (!playerInput.thrustInput) StopDrainingFuel();
@@ -58,7 +57,6 @@ public class FuelSystem : MonoBehaviour
     void OnCollisionExit2D(Collision2D collision) 
     {if (collision.gameObject.tag == "FuelStation") {StopRefillingFuel();}}
 
-    public void SetFuel(int currentFuel) {slider.value = currentFuel;}
     public void DrainFuel()
     {
         if (!isFuelConsumptionStarted)

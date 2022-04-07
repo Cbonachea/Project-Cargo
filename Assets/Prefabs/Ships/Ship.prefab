@@ -73,8 +73,8 @@ GameObject:
   - component: {fileID: 6201271865871328616}
   - component: {fileID: 7102452074176779022}
   - component: {fileID: 6201271865871328617}
-  - component: {fileID: 3826716353203793378}
   - component: {fileID: 6931569876480936484}
+  - component: {fileID: 3826716353203793378}
   m_Layer: 8
   m_Name: Ship
   m_TagString: Untagged
@@ -354,18 +354,6 @@ MonoBehaviour:
   crashTolerance: 4
   explosionprefab: {fileID: 0}
   explosionprefab2: {fileID: 0}
---- !u!114 &3826716353203793378
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6201271865871328619}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c02430ab1746ef44864301b56e83474, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6931569876480936484
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -386,6 +374,18 @@ MonoBehaviour:
   fuelPumpRate: 0
   fuelRefill: 0
   slider: {fileID: 380777492990396543, guid: b4f51e35e80fd01439f2f951039b821b, type: 3}
+--- !u!114 &3826716353203793378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6201271865871328619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c02430ab1746ef44864301b56e83474, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6201271865978238257
 GameObject:
   m_ObjectHideFlags: 0

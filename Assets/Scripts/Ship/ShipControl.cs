@@ -12,8 +12,10 @@ public class ShipControl : MonoBehaviour
     //isControlling is used to check if the player can control the ship
     public bool isControlling;
     //thrust refers to the engine power and is the force applied when thrusting the engine
+    [Range(0.0f, 150.0f)]
     public float thrust;
     //torque refers to the amount of angular momentum added to the ship when rotating clockwise and counterclockwise
+    [Range(0.0f, 70.0f)]
     public float torque;
     //cargo is on the cargo which you drop to make deliveries
     public Rigidbody2D cargo;
@@ -21,8 +23,6 @@ public class ShipControl : MonoBehaviour
     public Animator animator;
     //cargoDropLocation points to the location from where the cargo gets instantiated and dropped
     public Transform cargoDropLocation;
-    //setDeliveryTarget is a reference to the setDeliveryTarget script which randomly chooses a residence as the destination for the delivery
-    public SetDeliveryTarget setDeliveryTarget;
     //setNewTarget is used to check if the player can pick up more cargo
     public bool setNewTarget;
     //altitude text field is used to display current altitude on the UI altimeter
@@ -30,7 +30,9 @@ public class ShipControl : MonoBehaviour
     //this references which special is currently active
     public int currentSpecial;
     //this refers to the speed at which you can crash before exploding
+    [Range(0.0f, 15.0f)]
     public float crashTolerance = 4;
+
 
     //<PRIVATE VARIABLES>
     //rocketBlast area effector creates the force that blasts debris simulating engine blast
@@ -41,17 +43,18 @@ public class ShipControl : MonoBehaviour
     private Transform shipTransform;
     //hasCargo gets set within the 'LandedScript' when you pick up or drop off a delivery
     private bool hasCargo;
+    //setDeliveryTarget is a reference to the setDeliveryTarget script which randomly chooses a residence as the destination for the delivery
+    private SetDeliveryTarget setDeliveryTarget;
     //reference to the FuelSystem script
     private FuelSystem fuelSystem;
     //reference to the PlayerInput script
     private PlayerInput playerInput;
+    //reference to the audio manager used to play and stop sounds
+    private AudioManager audioManager;
     //explosionprefabs are particle systems
     [SerializeField] private GameObject explosionprefab;
     [SerializeField] private GameObject explosionprefab2;
-    private enum EngineStatus
-    {
-        on, off
-    }
+    private enum EngineStatus {on, off}
     private EngineStatus engineStatus;
 
 
@@ -64,10 +67,11 @@ public class ShipControl : MonoBehaviour
         cargoDropLocation = GetComponent<Transform>();
         animator = GetComponent<Animator>();
         rocketBlast = GetComponentInChildren<AreaEffector2D>();
+        audioManager = FindObjectOfType<AudioManager>();
         isControlling = true;
         hasCargo = false;
         setNewTarget = true;
-        currentSpecial = 1;
+        currentSpecial = 0;
     }
 
 
@@ -88,20 +92,20 @@ public class ShipControl : MonoBehaviour
         if (engineStatus == EngineStatus.on) return;
         animator.SetBool("isThrusting", true);
         rocketBlast.enabled = true;
-        FindObjectOfType<AudioManager>().Play("EngineSound");
+        audioManager.Play("EngineSound");
         engineStatus = EngineStatus.on;
     }
     void EngineOff()
     {
         if (engineStatus == EngineStatus.off) return;
         animator.SetBool("isThrusting", false);
-        FindObjectOfType<AudioManager>().Stop("EngineSound");
+        audioManager.Stop("EngineSound");
         rocketBlast.enabled = false;
         engineStatus = EngineStatus.off;
     }
     void DropCargo()
     {
-        Instantiate(Cargo, cargoDropLocation.position, cargoDropLocation.rotation);
+        Instantiate(cargo, cargoDropLocation.position, cargoDropLocation.rotation);
         hasCargo = false;
         setNewTarget = true;
     }
@@ -121,9 +125,9 @@ public class ShipControl : MonoBehaviour
         if (fuelSystem.currentFuel > 0 && playerInput.thrustInput) Thrust();
     }
 
-    void Thrust() { ship.AddForce(transform.up * thrust); }
-    void TorqueL() { ship.AddTorque(torque * Mathf.Deg2Rad, ForceMode2D.Impulse); }
-    void TorqueR() { ship.AddTorque(-torque * Mathf.Deg2Rad, ForceMode2D.Impulse); }
+    void Thrust()   {ship.AddForce(transform.up * thrust);}
+    void TorqueL()  {ship.AddTorque(torque * Mathf.Deg2Rad, ForceMode2D.Impulse);}
+    void TorqueR()  {ship.AddTorque(-torque * Mathf.Deg2Rad, ForceMode2D.Impulse);}
 
 
     //<///////////////////////////////////////////////////////////////////////////>
@@ -143,7 +147,7 @@ public class ShipControl : MonoBehaviour
         rocketBlast.enabled = false;
         ship.angularDrag = 0.3f;
         Destroy(gameObject);
-        FindObjectOfType<AudioManager>().Play("Explosion");
+        audioManager.Play("Explosion");
         Instantiate(explosionprefab, gameObject.transform.position, Quaternion.identity);
         Instantiate(explosionprefab2, gameObject.transform.position, Quaternion.identity);
     }
